@@ -63,6 +63,25 @@ the two axes. That was wrong twice over: the real parting line is at 43/57, not
 50/50, and interlocking yoke arms cannot be separated by any plane. The CAD
 split is the authority.
 
+## 3. `base_footprint` is a massless dummy root
+
+`base_link` has an inertia, and `kdl_parser` warns:
+
+    The root link base_link has an inertia specified in the URDF, but KDL does
+    not support a root link with an inertia.
+
+KDL then *ignores* it — so every KDL consumer (IK, dynamics) would silently work
+from a model whose base has no mass. The conventional fix is an empty link above
+the real base, joined by a fixed joint:
+
+    <link name="base_footprint"/>
+
+It carries no inertial and no geometry, which is the whole point. With it in
+place `robot_state_publisher` loads the description with zero warnings.
+
+Added by `dummy_root` in `overrides.json`; drop that key for a description
+rooted directly at `base_link`.
+
 ## Caveats carried by this description
 
 - Masses come from Fusion's default material, **steel** (7849 kg/m³). Printed

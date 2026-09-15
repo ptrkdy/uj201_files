@@ -155,5 +155,9 @@
   ],
   "reverse_joints": [
     "Revolute 18"
-  ]
+  ],
+  "dummy_root": {
+    "_comment": "KDL ignores an inertia on the root link, so give it a massless one above base_link.",
+    "name": "base_footprint"
+  }
 }

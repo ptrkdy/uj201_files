@@ -113,6 +113,11 @@ def mesh_pose(link, origin, mesh_frame):
 
 def render_link(link, origin, pkg, mesh_rel, mesh_frame='world', plain=False,
                 mesh_prefix='meshes/'):
+    # A dummy root carries nothing at all -- no inertial, no geometry. That is
+    # the point: KDL refuses to accept an inertia on the root link.
+    if link.get('dummy'):
+        return '<link name="%s"/>' % link['name']
+
     com = sub(link['center_of_mass'], origin)
     ixx, iyy, izz, ixy, iyz, ixz = link['inertia']
     visual, visual_rpy = mesh_pose(link, origin, mesh_frame)
@@ -426,6 +431,45 @@ def apply_overrides(model, path, report, model_dir=None):
             group.setdefault('member_names', group.get('members', []))
         model.setdefault('rigid_groups', []).extend(extra)
         report.append('overrides: added %d extra rigid group(s).' % len(extra))
+
+
+def add_dummy_root(model, spec, report):
+    """Put a massless link above base_link.
+
+    kdl_parser warns that "the root link has an inertia specified in the URDF,
+    but KDL does not support a root link with an inertia" and then ignores it --
+    so every KDL consumer (IK, dynamics) silently works from a model whose base
+    has no mass. The conventional fix is an empty root joined to the real base
+    by a fixed joint, which costs nothing and removes the ambiguity.
+    """
+    if not spec:
+        return
+    name = spec if isinstance(spec, str) else spec.get('name', 'base_footprint')
+
+    base = next((l for l in model['links'] if l.get('is_base')), None)
+    if base is None:
+        report.append('dummy_root: no base link to sit above; skipped')
+        return
+    if any(l['name'] == name for l in model['links']):
+        report.append('dummy_root: "%s" already exists; skipped' % name)
+        return
+
+    base['is_base'] = False
+    model['links'].insert(0, {
+        'id': 'synthetic:' + name, 'name': name, 'component': '(dummy root)',
+        'occurrence': '', 'parent_path': '', 'world_transform': None, 'depth': 0,
+        'body_count': 0, 'mass': 0.0, 'center_of_mass': [0.0, 0.0, 0.0],
+        'inertia': [0.0] * 6, 'is_base': True, 'mesh': None, 'dummy': True,
+    })
+    model['joints'].insert(0, {
+        'fusion_name': 'dummy root', 'name': '%s_to_%s' % (name, base['name']),
+        'type': 'fixed', 'parent': name, 'child': base['name'],
+        'parent_id': '', 'child_id': base['id'],
+        'axis': [0.0, 0.0, 1.0], 'origin': [0.0, 0.0, 0.0],
+        'lower': 0.0, 'upper': 0.0,
+    })
+    report.append('added massless root "%s" above "%s" so KDL does not discard '
+                  'the base inertia' % (name, base['name']))
 
 
 def reverse_joints(model, names, report):
@@ -957,6 +1001,10 @@ def main():
                         os.path.dirname(os.path.abspath(args.model)))
     prune_wrapper_links(model, report)
     expand_rigid_groups(model, report)
+    # Last, so it sits above whatever ended up being the base.
+    if args.overrides:
+        with open(args.overrides) as f:
+            add_dummy_root(model, json.load(f).get('dummy_root'), report)
 
     robot = model['robot_name']
     pkg = robot + PKG_SUFFIX

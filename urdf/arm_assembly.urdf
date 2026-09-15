@@ -3,6 +3,8 @@
 
 
 
+<link name="base_footprint"/>
+
 <link name="base_link">
   <inertial>
     <origin xyz="0.0295624 0.00899979 0.0171489" rpy="0 0 0"/>
@@ -531,6 +533,12 @@
     </geometry>
   </collision>
 </link>
+
+<joint name="base_footprint_to_base_link" type="fixed">
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+</joint>
 
 <joint name="revolute_5" type="revolute">
   <origin xyz="0.035 -0.0126 -0.004" rpy="0 0 0"/>
