@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<robot name="arm_assembly" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find arm_assembly_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find arm_assembly_description)/urdf/arm_assembly.ros2control" />
+<xacro:include filename="$(find arm_assembly_description)/urdf/arm_assembly.gazebo" />
+<link name="base_link">
+  <inertial>
+    <origin xyz="0.029562448087113703 0.008999790502759704 0.01714890804924539" rpy="0 0 0"/>
+    <mass value="0.910245859615558"/>
+    <inertia ixx="0.000946" iyy="0.000846" izz="0.00097" ixy="0.0" iyz="0.0" ixz="0.000159"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find arm_assembly_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find arm_assembly_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="p02_new_base_neck_1">
+  <inertial>
+    <origin xyz="0.03219339195621125 -0.0001304039699804374 0.030019398441597914" rpy="0 0 0"/>
+    <mass value="0.5170022538983735"/>
+    <inertia ixx="0.000359" iyy="0.000396" izz="0.000159" ixy="0.0" iyz="3e-06" ixz="-3.3e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.056173 -0.00865 -0.022" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find arm_assembly_description)/meshes/p02_new_base_neck_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.056173 -0.00865 -0.022" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find arm_assembly_description)/meshes/p02_new_base_neck_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="p10_new_elbow_v1_1">
+  <inertial>
+    <origin xyz="-0.07174377177385731 0.2643680618179507 0.08895938403130743" rpy="0 0 0"/>
+    <mass value="0.9735419524115125"/>
+    <inertia ixx="0.002606" iyy="0.002372" izz="0.000415" ixy="-0.0" iyz="0.0" ixz="-0.000113"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.158945 0.256118 -0.270818" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find arm_assembly_description)/meshes/p10_new_elbow_v1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.158945 0.256118 -0.270818" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find arm_assembly_description)/meshes/p10_new_elbow_v1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+

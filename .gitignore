@@ -1,0 +1,9 @@
+# Generated packages -- rebuilt from arm_assembly_model.json + overrides.json
+out/
+out_ujtest/
+
+# Scratch variants used while debugging the U-joint
+overrides_ujtest.json
+
+__pycache__/
+*.pyc

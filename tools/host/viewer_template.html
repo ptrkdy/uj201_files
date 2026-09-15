@@ -1,0 +1,302 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>__ROBOT__ — URDF viewer</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#15171c; color:#e6e8ee;
+         font:13px/1.5 ui-sans-serif,system-ui,sans-serif; overflow:hidden; }
+  #canvas { position:fixed; inset:0; }
+  #panel { position:fixed; top:0; right:0; bottom:0; width:310px; overflow-y:auto;
+           background:#1c1f26f2; border-left:1px solid #2e3340;
+           padding:14px 16px; overscroll-behavior:contain; }
+  h1 { font-size:14px; margin:0 0 2px; }
+  .sub { color:#8b93a7; font-size:11px; margin-bottom:14px; }
+  .joint { margin-bottom:11px; }
+  .jname { display:flex; justify-content:space-between; gap:8px; font-size:11px; }
+  .jname b { font-weight:600; }
+  .jname span { color:#7fd1ff; font-variant-numeric:tabular-nums; }
+  input[type=range] { width:100%; accent-color:#7fd1ff; touch-action:none; }
+  .fixed { color:#6b7383; font-size:11px; padding:2px 0; }
+  .link { display:flex; align-items:center; gap:7px; font-size:11px; padding:1px 0;
+          color:#b9c0d0; }
+  .link i { width:10px; height:10px; border-radius:2px; flex:none; }
+  button { background:#2a2f3b; color:#e6e8ee; border:1px solid #3a4150; border-radius:5px;
+           padding:5px 9px; font-size:11px; cursor:pointer; margin:0 4px 8px 0; }
+  button:hover { background:#333a49; }
+  #err { position:fixed; left:12px; bottom:12px; max-width:52%; background:#3a1f22;
+         border:1px solid #6b3138; border-radius:6px; padding:9px 12px; font-size:11px;
+         white-space:pre-wrap; display:none; }
+  #hud { position:fixed; left:12px; top:12px; font-size:11px; color:#8b93a7; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="hud">drag orbit · wheel zoom · right-drag pan</div>
+<div id="panel">
+  <h1>__ROBOT__</h1>
+  <div class="sub" id="stats">loading…</div>
+  <button id="zero">zero joints</button>
+  <button id="axes">toggle frames</button>
+  <button id="wire">wireframe</button>
+  <button id="colour">plain colour</button>
+  <div id="joints"></div>
+  <div class="sub" style="margin:14px 0 6px">links</div>
+  <div id="links"></div>
+</div>
+<div id="err"></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+} }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+
+const URDF_URL = '__URDF__';
+const fail = (m) => { const e = document.getElementById('err');
+                      e.style.display = 'block'; e.textContent += m + '\n'; };
+
+// ROS is Z-up; three.js defaults to Y-up.
+THREE.Object3D.DEFAULT_UP.set(0, 0, 1);
+
+const canvas = document.getElementById('canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(devicePixelRatio);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x15171c);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 100);
+camera.up.set(0, 0, 1);
+camera.position.set(0.7, -0.7, 0.55);
+const controls = new OrbitControls(camera, canvas);
+
+scene.add(new THREE.HemisphereLight(0xbcd4ff, 0x2a2f38, 2.0));
+const key = new THREE.DirectionalLight(0xffffff, 2.0);
+key.position.set(1, -1.4, 2); scene.add(key);
+const grid = new THREE.GridHelper(2, 20, 0x3a4150, 0x262b35);
+grid.rotation.x = Math.PI / 2; scene.add(grid);
+
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+// --- URDF -------------------------------------------------------------------
+const nums = (s, d = [0, 0, 0]) => {
+  if (!s) return d;
+  const v = s.trim().split(/\s+/).map(Number);
+  return v.length === 3 && v.every(n => isFinite(n)) ? v : d;
+};
+// URDF rpy is fixed-axis XYZ, i.e. R = Rz(yaw)·Ry(pitch)·Rx(roll).
+// In three.js that is Euler order 'ZYX'.
+const setPose = (obj, originEl) => {
+  const xyz = nums(originEl?.getAttribute('xyz'));
+  const rpy = nums(originEl?.getAttribute('rpy'));
+  obj.position.set(...xyz);
+  obj.setRotationFromEuler(new THREE.Euler(rpy[0], rpy[1], rpy[2], 'ZYX'));
+};
+
+const stl = new STLLoader();
+const PALETTE = [0x7fd1ff, 0xffb26b, 0x9ae6a0, 0xf58fb4, 0xc9a7f5, 0xffe08a,
+                 0x6fd6c4, 0xff8f6b, 0x8fb4ff, 0xd4d97a, 0xe58fd6, 0x7ae0ff];
+const materials = [];
+let colourByLink = true;
+const plain = new THREE.MeshStandardMaterial({
+  color: 0xa8b0c0, metalness: 0.25, roughness: 0.62 });
+function materialFor(index) {
+  const m = new THREE.MeshStandardMaterial({
+    color: PALETTE[index % PALETTE.length], metalness: 0.2, roughness: 0.6 });
+  materials.push(m);
+  return m;
+}
+const frames = [];
+const meshes = [];
+const movable = [];
+
+(async function main() {
+  let text;
+  try {
+    const res = await fetch(URDF_URL);
+    if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+    text = await res.text();
+  } catch (e) { fail('Could not fetch ' + URDF_URL + ': ' + e.message); return; }
+
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  if (doc.querySelector('parsererror')) { fail('URDF is not well-formed XML.'); return; }
+
+  const linkObj = new Map();
+  const pending = [];
+
+  let linkIndex = 0;
+  for (const el of doc.querySelectorAll('robot > link')) {
+    const name = el.getAttribute('name');
+    const colour = materialFor(linkIndex++);
+    const group = new THREE.Group();
+    group.name = name;
+    linkObj.set(name, group);
+
+    const ax = new THREE.AxesHelper(0.045);
+    ax.visible = false; frames.push(ax); group.add(ax);
+
+    for (const vis of el.querySelectorAll(':scope > visual')) {
+      const holder = new THREE.Group();
+      setPose(holder, vis.querySelector(':scope > origin'));
+      group.add(holder);
+
+      const meshEl = vis.querySelector('geometry > mesh');
+      const boxEl = vis.querySelector('geometry > box');
+      if (meshEl) {
+        const scale = nums(meshEl.getAttribute('scale'), [1, 1, 1]);
+        // Strip ROS-isms so a plain relative path is what actually gets fetched.
+        const file = meshEl.getAttribute('filename')
+          .replace(/^file:\/\//, '').replace(/^package:\/\/[^/]+\//, '')
+          .replace(/^\$\(find\s+[^)]+\)\/?/, '').replace(/^\/+/, '');
+        pending.push(new Promise(res => stl.load(file, geo => {
+          const m = new THREE.Mesh(geo, colour);
+          m.userData.link = name;
+          m.scale.set(...scale);
+          holder.add(m); meshes.push(m); res();
+        }, undefined, () => { fail('missing mesh: ' + file); res(); })));
+      } else if (boxEl) {
+        const s = nums(boxEl.getAttribute('size'), [0.01, 0.01, 0.01]);
+        holder.add(new THREE.Mesh(new THREE.BoxGeometry(...s),
+          new THREE.MeshStandardMaterial({ color: 0xd08a5a })));
+      }
+    }
+  }
+
+  const jointEls = [...doc.querySelectorAll('robot > joint')];
+  const childOf = new Set();
+  for (const j of jointEls) {
+    const parent = j.querySelector(':scope > parent')?.getAttribute('link');
+    const child = j.querySelector(':scope > child')?.getAttribute('link');
+    const po = linkObj.get(parent), co = linkObj.get(child);
+    if (!po || !co) { fail('joint "' + j.getAttribute('name') + '" references a missing link'); continue; }
+
+    const pivot = new THREE.Group();
+    setPose(pivot, j.querySelector(':scope > origin'));
+    po.add(pivot); pivot.add(co);
+    childOf.add(child);
+
+    const type = j.getAttribute('type');
+    if (type === 'revolute' || type === 'continuous' || type === 'prismatic') {
+      const limit = j.querySelector(':scope > limit');
+      movable.push({
+        name: j.getAttribute('name'), type, pivot,
+        base: pivot.quaternion.clone(), basePos: pivot.position.clone(),
+        axis: new THREE.Vector3(...nums(j.querySelector(':scope > axis')?.getAttribute('xyz'), [0, 0, 1])).normalize(),
+        lower: type === 'continuous' ? -Math.PI : Number(limit?.getAttribute('lower') ?? -1.57),
+        upper: type === 'continuous' ? Math.PI : Number(limit?.getAttribute('upper') ?? 1.57),
+      });
+    }
+  }
+
+  const roots = [...linkObj.keys()].filter(n => !childOf.has(n));
+  roots.forEach(n => scene.add(linkObj.get(n)));
+  if (roots.length > 1) fail('WARNING: ' + roots.length + ' disconnected roots: ' + roots.join(', '));
+
+  await Promise.all(pending);
+
+  document.getElementById('stats').textContent =
+    linkObj.size + ' links · ' + jointEls.length + ' joints · ' +
+    movable.length + ' movable · ' + meshes.length + ' meshes';
+
+  // Frame the robot.
+  const box = new THREE.Box3().setFromObject(scene);
+  if (box.isEmpty() === false) {
+    const size = box.getSize(new THREE.Vector3()).length();
+    const mid = box.getCenter(new THREE.Vector3());
+    controls.target.copy(mid);
+    camera.position.copy(mid).add(new THREE.Vector3(0.8, -0.8, 0.5).multiplyScalar(size * 0.7));
+    camera.near = size / 200; camera.far = size * 20; camera.updateProjectionMatrix();
+  }
+
+  buildPanel(jointEls);
+  buildLinkList([...linkObj.keys()]);
+})();
+
+function buildLinkList(names) {
+  const host = document.getElementById('links');
+  names.forEach((n, i) => {
+    const row = document.createElement('div');
+    row.className = 'link';
+    const sw = document.createElement('i');
+    sw.style.background = '#' + PALETTE[i % PALETTE.length].toString(16).padStart(6, '0');
+    row.append(sw, document.createTextNode(n));
+    host.append(row);
+  });
+}
+
+function apply(j, value) {
+  if (j.type === 'prismatic') {
+    j.pivot.position.copy(j.basePos).add(j.axis.clone().multiplyScalar(value));
+  } else {
+    j.pivot.quaternion.copy(j.base)
+      .multiply(new THREE.Quaternion().setFromAxisAngle(j.axis, value));
+  }
+}
+
+function buildPanel(jointEls) {
+  const host = document.getElementById('joints');
+  const fixedCount = jointEls.length - movable.length;
+  for (const j of movable) {
+    const wrap = document.createElement('div');
+    wrap.className = 'joint';
+    const label = document.createElement('div');
+    label.className = 'jname';
+    const out = document.createElement('span');
+    out.textContent = '0.000';
+    label.innerHTML = '<b>' + j.name + '</b>';
+    label.appendChild(out);
+    const slider = document.createElement('input');
+    slider.type = 'range'; slider.min = j.lower; slider.max = j.upper;
+    slider.step = (j.upper - j.lower) / 400 || 0.001; slider.value = 0;
+    slider.oninput = () => { apply(j, +slider.value); out.textContent = (+slider.value).toFixed(3); };
+    slider.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      try { slider.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+    wrap.append(label, slider); host.append(wrap);
+    j.slider = slider; j.out = out;
+  }
+  if (fixedCount) {
+    const d = document.createElement('div');
+    d.className = 'fixed';
+    d.textContent = '+ ' + fixedCount + ' fixed joint(s)';
+    host.append(d);
+  }
+}
+
+document.getElementById('zero').onclick = () =>
+  movable.forEach(j => { apply(j, 0); j.slider.value = 0; j.out.textContent = '0.000'; });
+document.getElementById('axes').onclick = () =>
+  frames.forEach(a => a.visible = !a.visible);
+document.getElementById('wire').onclick = () =>
+  materials.forEach(m => m.wireframe = !m.wireframe);
+document.getElementById('colour').onclick = () => {
+  colourByLink = !colourByLink;
+  scene.traverse(o => {
+    if (!o.isMesh || !o.userData.link) return;
+    if (colourByLink) { o.material = o.userData.own || o.material; }
+    else { o.userData.own = o.userData.own || o.material; o.material = plain; }
+  });
+};
+
+// Nothing starting inside the panel should reach the 3D view behind it.
+for (const type of ['pointerdown', 'pointermove', 'pointerup', 'wheel']) {
+  document.getElementById('panel').addEventListener(
+    type, e => e.stopPropagation(), { capture: false });
+}
+
+(function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+</script>
+</body>
+</html>

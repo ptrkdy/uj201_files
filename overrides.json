@@ -1,0 +1,159 @@
+{
+  "_comment": "Post-extraction corrections. Values here override what Fusion reports, for things Fusion cannot know (datasheet masses for surface-modelled stand-ins) or cannot express (a universal joint in a URDF tree). Keep this file in version control next to the model.",
+  "_servo_note": "Feetech STS/SCS-class servos are ~55-65 g. The stand-in blocks are surface bodies, so Fusion reports mass 0. Inertia below is a 40x20x35 mm uniform block at 60 g; replace with datasheet values when you have them.",
+  "links": {
+    "servo_motor_initial_draft": {
+      "mass": 0.06,
+      "inertia": [
+        8.1e-06,
+        1.41e-05,
+        1e-05,
+        0,
+        0,
+        0
+      ]
+    },
+    "servo_motor_initial_draft_2": {
+      "mass": 0.06,
+      "inertia": [
+        8.1e-06,
+        1.41e-05,
+        1e-05,
+        0,
+        0,
+        0
+      ]
+    },
+    "servo_motor_initial_draft_3": {
+      "mass": 0.06,
+      "inertia": [
+        8.1e-06,
+        1.41e-05,
+        1e-05,
+        0,
+        0,
+        0
+      ]
+    },
+    "servo_motor_initial_draft_4": {
+      "mass": 0.06,
+      "inertia": [
+        8.1e-06,
+        1.41e-05,
+        1e-05,
+        0,
+        0,
+        0
+      ]
+    },
+    "servo_motor_initial_draft_5": {
+      "mass": 0.06,
+      "inertia": [
+        8.1e-06,
+        1.41e-05,
+        1e-05,
+        0,
+        0,
+        0
+      ]
+    },
+    "servo_motor_initial_draft_6": {
+      "mass": 0.06,
+      "inertia": [
+        8.1e-06,
+        1.41e-05,
+        1e-05,
+        0,
+        0,
+        0
+      ]
+    },
+    "servo_motor_initial_draft_7": {
+      "mass": 0.06,
+      "inertia": [
+        8.1e-06,
+        1.41e-05,
+        1e-05,
+        0,
+        0,
+        0
+      ]
+    },
+    "servo_motor_initial_draft_8": {
+      "mass": 0.06,
+      "inertia": [
+        8.1e-06,
+        1.41e-05,
+        1e-05,
+        0,
+        0,
+        0
+      ]
+    },
+    "servo_motor_initial_draft_9": {
+      "mass": 0.06,
+      "inertia": [
+        8.1e-06,
+        1.41e-05,
+        1e-05,
+        0,
+        0,
+        0
+      ]
+    },
+    "u_joint_box_servo_motor_initial_draft": {
+      "mass": 0.06,
+      "inertia": [
+        8.1e-06,
+        1.41e-05,
+        1e-05,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "rigid_groups": [
+    {
+      "_comment": "PROVISIONAL - inferred from world positions, not from CAD. Confirm each, then make them real Rigid Groups in Fusion and delete from here.",
+      "name": "inferred_base_servo",
+      "member_names": [
+        "base_link",
+        "servo_motor_initial_draft"
+      ]
+    },
+    {
+      "name": "inferred_elbow_servo",
+      "member_names": [
+        "p10_new_elbow",
+        "servo_motor_initial_draft_3"
+      ]
+    },
+    {
+      "name": "inferred_wrist_servo",
+      "member_names": [
+        "p16_wrist_prototype",
+        "servo_motor_initial_draft_5"
+      ]
+    }
+  ],
+  "split_links": [
+    {
+      "_comment": "handles_prototype was split in Fusion and exported as two shells. The halves are ONE rigid body -- bonded with a fixed joint at the split. Revolute 18 then drives the U-bridge housing off the far half, making the U-joint a 2-DOF shoulder.",
+      "link": "handles_prototype",
+      "from_mesh": "meshes/split-adv-handle.stl",
+      "between_joints": [
+        "Revolute 17",
+        "Revolute 18"
+      ],
+      "parts": [
+        "uj_yoke_in",
+        "uj_yoke_out"
+      ],
+      "bind": true
+    }
+  ],
+  "reverse_joints": [
+    "Revolute 18"
+  ]
+}
