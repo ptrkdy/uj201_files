@@ -111,7 +111,8 @@ def mesh_pose(link, origin, mesh_frame):
     return sub(position, origin), rpy_from_matrix(matrix)
 
 
-def render_link(link, origin, pkg, mesh_rel, mesh_frame='world', plain=False):
+def render_link(link, origin, pkg, mesh_rel, mesh_frame='world', plain=False,
+                mesh_prefix='meshes/'):
     com = sub(link['center_of_mass'], origin)
     ixx, iyy, izz, ixy, iyz, ixz = link['inertia']
     visual, visual_rpy = mesh_pose(link, origin, mesh_frame)
@@ -119,7 +120,8 @@ def render_link(link, origin, pkg, mesh_rel, mesh_frame='world', plain=False):
     if mesh_rel:
         # A plain .urdf carries a relative path so any browser viewer can fetch
         # it; the .xacro keeps the $(find) form that ROS expects.
-        target = mesh_rel if plain else 'file://$(find %s)/%s' % (pkg, mesh_rel)
+        target = (mesh_prefix + os.path.basename(mesh_rel) if plain
+                  else 'file://$(find %s)/%s' % (pkg, mesh_rel))
         shape = '<mesh filename="%s" scale="0.001 0.001 0.001"/>' % target
     else:
         # No STL for this link: a small box keeps the URDF loadable in RViz.
@@ -168,7 +170,7 @@ def render_joint(joint, origins):
     return '\n'.join(out)
 
 
-def render_robot(model, pkg, report, plain=False):
+def render_robot(model, pkg, report, plain=False, mesh_prefix='meshes/'):
     origins = link_origins(model, report)
     parts = ['<?xml version="1.0" ?>',
              '<robot name="%s" xmlns:xacro="http://www.ros.org/wiki/xacro">' % model['robot_name'],
@@ -181,7 +183,7 @@ def render_robot(model, pkg, report, plain=False):
     # Every link in the model gets written, base first, then the rest in order.
     for link in sorted(model['links'], key=lambda l: 0 if l.get('is_base') else 1):
         parts.append(render_link(link, origins[link['name']], pkg, link.get('mesh'),
-                                 mesh_frame, plain))
+                                 mesh_frame, plain, mesh_prefix))
         parts.append('')
     for joint in model['joints']:
         parts.append(render_joint(joint, origins))
@@ -927,6 +929,9 @@ def main():
     ap.add_argument('-o', '--out', default='.', help='where to write the package')
     ap.add_argument('--check-meshes', action='store_true',
                     help='verify STL coordinate frames against the model')
+    ap.add_argument('--urdf-only', action='store_true',
+                    help='write just the description and viewer into --out, with no '
+                         'ROS package scaffolding and mesh paths pointing at ../meshes')
     ap.add_argument('--mesh-frame', choices=['world', 'local'],
                     help="override the model's mesh_frame")
     ap.add_argument('--overrides',
@@ -965,6 +970,7 @@ def main():
         print()
 
     subs = {'pkg': pkg, 'robot': robot}
+    mesh_prefix = '../meshes/' if args.urdf_only else 'meshes/'
     xacro_text = render_robot(model, pkg, report)
     for line in report:
         print('  [build] %s' % line)
@@ -973,7 +979,7 @@ def main():
 
     # A flat .urdf next to the .xacro: no includes, no $(find), relative mesh
     # paths -- loadable by browser viewers and by check_urdf without xacro.
-    plain_text = render_robot(model, pkg, [], plain=True)
+    plain_text = render_robot(model, pkg, [], plain=True, mesh_prefix=mesh_prefix)
     viewer_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                'viewer_template.html')
     viewer_html = ''
@@ -981,6 +987,25 @@ def main():
         with open(viewer_path, encoding='utf-8') as vf:
             viewer_html = (vf.read().replace('__ROBOT__', robot)
                                     .replace('__URDF__', 'urdf/' + robot + '.urdf'))
+
+    if args.urdf_only:
+        out_dir = os.path.abspath(args.out)
+        written = [
+            write(os.path.join(out_dir, robot + '.xacro'), xacro_text),
+            write(os.path.join(out_dir, robot + '.urdf'), plain_text),
+            write(os.path.join(out_dir, 'materials.xacro'), MATERIALS % robot),
+        ]
+        if viewer_html:
+            written.append(write(os.path.join(out_dir, 'viewer.html'),
+                                 viewer_html.replace('urdf/' + robot + '.urdf',
+                                                     robot + '.urdf')))
+        print('wrote %s' % out_dir)
+        for path in written:
+            print('  %s' % os.path.relpath(path, out_dir))
+        print()
+        print('%d links, %d joints, %d extraction error(s)'
+              % (len(model['links']), len(model['joints']), len(errors)))
+        return 1 if errors else 0
 
     written = [
         write(os.path.join(out_dir, 'urdf', robot + '.xacro'), xacro_text),

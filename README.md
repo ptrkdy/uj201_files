@@ -30,8 +30,17 @@ problems. No flattening, no Break Link, no Paste New, no renaming.
     python tools/host/urdf_lint.py out/arm_assembly_description/urdf/arm_assembly.xacro
 
     # 3. look at it -- no ROS needed
-    cd out/arm_assembly_description && python -m http.server 8765
-    #    then open http://127.0.0.1:8765/viewer.html
+    python -m http.server 8765        # from the repository root
+    #    then open http://127.0.0.1:8765/urdf/viewer.html
+
+`urdf/` holds the current description and the viewer, checked in so the robot can
+be read and viewed without running any of the toolchain. Regenerate it with:
+
+    python tools/host/urdf_build.py arm_assembly_model.json -o ./urdf --urdf-only --overrides overrides.json --mesh-frame local
+
+`urdf/NOTES.md` records the two places where the description deliberately departs
+from the CAD -- the reversed shoulder joint and the split yoke -- and is written
+by hand, not generated.
 
 Extraction and generation are deliberately separate: `urdf_build.py` is plain
 Python, so URDF output can be iterated on in seconds instead of re-exporting from

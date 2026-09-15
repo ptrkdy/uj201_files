@@ -38,8 +38,13 @@ class Findings:
         self.warnings.append(msg)
 
 
-def resolve_find(path, pkg_root, pkg_name):
-    """Turn 'file://$(find pkg)/meshes/x.stl' into a local filesystem path."""
+def resolve_find(path, pkg_root, pkg_name, base_dir=None):
+    """Turn 'file://$(find pkg)/meshes/x.stl' into a local filesystem path.
+
+    A plain relative path is resolved against the file that referenced it first,
+    then against the package root -- a description living in a bare urdf/ folder
+    points at ../meshes, while one inside a package points at meshes/.
+    """
     p = path
     if p.startswith('file://'):
         p = p[len('file://'):]
@@ -55,6 +60,10 @@ def resolve_find(path, pkg_root, pkg_name):
         return os.path.normpath(os.path.join(pkg_root, rest.lstrip('/\\')))
     if os.path.isabs(p):
         return p
+    if base_dir:
+        candidate = os.path.normpath(os.path.join(base_dir, p))
+        if os.path.exists(candidate):
+            return candidate
     return os.path.normpath(os.path.join(pkg_root, p))
 
 
@@ -140,12 +149,12 @@ def check_inertial(link_name, link, find):
                       'ixx=%g iyy=%g izz=%g' % (link_name, names, ixx, iyy, izz))
 
 
-def check_meshes(link_name, link, pkg_root, pkg_name, find):
+def check_meshes(link_name, link, pkg_root, pkg_name, find, base_dir=None):
     for tag in ('visual', 'collision'):
         for el in link.findall(tag):
             for mesh in el.iter('mesh'):
                 fn = mesh.get('filename', '')
-                resolved = resolve_find(fn, pkg_root, pkg_name)
+                resolved = resolve_find(fn, pkg_root, pkg_name, base_dir)
                 if resolved is None:
                     find.warn('link "%s" %s mesh %s is in another package; not checked'
                               % (link_name, tag, fn))
@@ -313,7 +322,7 @@ def main():
 
     for name, el in links.items():
         check_inertial(name, el, find)
-        check_meshes(name, el, pkg_root, pkg_name, find)
+        check_meshes(name, el, pkg_root, pkg_name, find, os.path.dirname(path))
 
     root_link = None
     if links:

@@ -1,0 +1,683 @@
+<?xml version="1.0" ?>
+<robot name="arm_assembly" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+
+<link name="base_link">
+  <inertial>
+    <origin xyz="0.0295624 0.00899979 0.0171489" rpy="0 0 0"/>
+    <mass value="0.910246"/>
+    <inertia ixx="0.000945835" iyy="0.00084591" izz="0.000970309" ixy="1e-09" iyz="8e-09" ixz="0.000159068"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="../meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="../meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="p02_new_base_neck">
+  <inertial>
+    <origin xyz="0.0321934 -0.000130404 0.0300194" rpy="0 0 0"/>
+    <mass value="0.517002"/>
+    <inertia ixx="0.000359391" iyy="0.000395554" izz="0.000158502" ixy="1.31e-07" iyz="2.915e-06" ixz="-3.252e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.048 -0.023 -0.0088" rpy="-1.5708 -4.43615e-29 -3.14159"/>
+    <geometry>
+      <mesh filename="../meshes/p02_new_base_neck.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0.048 -0.023 -0.0088" rpy="-1.5708 -4.43615e-29 -3.14159"/>
+    <geometry>
+      <mesh filename="../meshes/p02_new_base_neck.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="servo_motor_initial_draft">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.06"/>
+    <inertia ixx="8.1e-06" iyy="1.41e-05" izz="1e-05" ixy="0" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 -1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 -1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="p10_new_elbow">
+  <inertial>
+    <origin xyz="0.00142923 -0.0185999 0.0808094" rpy="0 0 0"/>
+    <mass value="0.973542"/>
+    <inertia ixx="0.00260622" iyy="0.0023723" izz="0.000415286" ixy="-1.36e-07" iyz="2e-09" ixz="-0.000113019"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.012 0.03 -0.012" rpy="1.5708 1.5708 0"/>
+    <geometry>
+      <mesh filename="../meshes/p10_new_elbow.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="-0.012 0.03 -0.012" rpy="1.5708 1.5708 0"/>
+    <geometry>
+      <mesh filename="../meshes/p10_new_elbow.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="servo_motor_initial_draft_2">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.06"/>
+    <inertia ixx="8.1e-06" iyy="1.41e-05" izz="1e-05" ixy="0" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="1.5708 1.38778e-17 -3.15544e-30"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_2.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="1.5708 1.38778e-17 -3.15544e-30"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_2.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="new_elbow_v1">
+  <inertial>
+    <origin xyz="0.0562011 -0.0187337 -0.000456186" rpy="0 0 0"/>
+    <mass value="0.723783"/>
+    <inertia ixx="0.00031038" iyy="0.000715958" izz="0.000957407" ixy="5.33e-07" iyz="1.67e-07" ixz="1.5206e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.012 -0.0672 -0.012" rpy="1.5708 -2.15106e-16 3.14159"/>
+    <geometry>
+      <mesh filename="../meshes/new_elbow_v1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="-0.012 -0.0672 -0.012" rpy="1.5708 -2.15106e-16 3.14159"/>
+    <geometry>
+      <mesh filename="../meshes/new_elbow_v1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="servo_motor_initial_draft_3">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.06"/>
+    <inertia ixx="8.1e-06" iyy="1.41e-05" izz="1e-05" ixy="0" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="-1.5708 -1.5708 0"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_3.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="-1.5708 -1.5708 0"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_3.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="p16_wrist_prototype">
+  <inertial>
+    <origin xyz="0.0298028 -0.020642 -4.98e-07" rpy="0 0 0"/>
+    <mass value="0.32785"/>
+    <inertia ixx="0.000171117" iyy="0.000134852" izz="0.00024443" ixy="-4.93e-07" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.012 0.0155 -0.015" rpy="1.31839e-16 1.46349e-15 -1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/p16_wrist_prototype.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="-0.012 0.0155 -0.015" rpy="1.31839e-16 1.46349e-15 -1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/p16_wrist_prototype.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="servo_motor_initial_draft_4">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.06"/>
+    <inertia ixx="8.1e-06" iyy="1.41e-05" izz="1e-05" ixy="0" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="1.5708 1.5708 0"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_4.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="1.5708 1.5708 0"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_4.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="p17_end_effector">
+  <inertial>
+    <origin xyz="0.0352768 0.0155195 -0.000387812" rpy="0 0 0"/>
+    <mass value="0.523488"/>
+    <inertia ixx="0.000163865" iyy="0.000436597" izz="0.000476307" ixy="-7.1023e-05" iyz="1.34e-06" ixz="1.005e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.003 0.047 -0.023" rpy="1.5708 -3.1702e-15 1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/p17_end_effector.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0.003 0.047 -0.023" rpy="1.5708 -3.1702e-15 1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/p17_end_effector.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="servo_motor_initial_draft_5">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.06"/>
+    <inertia ixx="8.1e-06" iyy="1.41e-05" izz="1e-05" ixy="0" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="-3.14159 -1.5708 0"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_5.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="-3.14159 -1.5708 0"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_5.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="p18_end_effector_thumb">
+  <inertial>
+    <origin xyz="0.0352701 0.000338848 -0.0185005" rpy="0 0 0"/>
+    <mass value="0.24089"/>
+    <inertia ixx="3.5089e-05" iyy="0.000115034" izz="9.7901e-05" ixy="-2.502e-06" iyz="-0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.186 -0.011 0.0055" rpy="-1.5708 -3.81639e-16 2.86336e-16"/>
+    <geometry>
+      <mesh filename="../meshes/p18_end_effector_thumb.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0.186 -0.011 0.0055" rpy="-1.5708 -3.81639e-16 2.86336e-16"/>
+    <geometry>
+      <mesh filename="../meshes/p18_end_effector_thumb.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="servo_motor_initial_draft_6">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.06"/>
+    <inertia ixx="8.1e-06" iyy="1.41e-05" izz="1e-05" ixy="0" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="-2.86489e-15 4.16334e-17 -3.14159"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_6.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="-2.86489e-15 4.16334e-17 -3.14159"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_6.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="servo_motor_initial_draft_7">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.06"/>
+    <inertia ixx="8.1e-06" iyy="1.41e-05" izz="1e-05" ixy="0" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="1.5708 -2.34172e-57 1.58377e-16"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_7.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="1.5708 -2.34172e-57 1.58377e-16"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_7.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="servo_motor_initial_draft_8">
+  <inertial>
+    <origin xyz="0.033 -0.0126 0.035" rpy="0 0 0"/>
+    <mass value="0.06"/>
+    <inertia ixx="8.1e-06" iyy="1.41e-05" izz="1e-05" ixy="0" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.033 -0.0126 0.035" rpy="-1.5708 1.22465e-16 1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_8.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0.033 -0.0126 0.035" rpy="-1.5708 1.22465e-16 1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_8.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="p01_base_binder_strip">
+  <inertial>
+    <origin xyz="0.032037 -0.0172498 0.011" rpy="0 0 0"/>
+    <mass value="0.139888"/>
+    <inertia ixx="3.9355e-05" iyy="9.6151e-05" izz="0.000124222" ixy="0" iyz="0" ixz="-0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="2.77556e-16 2.58075e-31 -1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/p01_base_binder_strip.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="2.77556e-16 2.58075e-31 -1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/p01_base_binder_strip.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="servo_motor_initial_draft_9">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.06"/>
+    <inertia ixx="8.1e-06" iyy="1.41e-05" izz="1e-05" ixy="0" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="-1.5708 -1.5708 0"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_9.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="-1.5708 -1.5708 0"/>
+    <geometry>
+      <mesh filename="../meshes/servo_motor_initial_draft_9.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="cradle">
+  <inertial>
+    <origin xyz="-0.0307609 0.0320269 0.0150273" rpy="0 0 0"/>
+    <mass value="0.575494"/>
+    <inertia ixx="0.000255774" iyy="0.0005232" izz="0.000601944" ixy="2.062e-06" iyz="2.05e-07" ixz="5.7968e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="-1.6491e-59 7.00649e-45 -1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/cradle.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="-1.6491e-59 7.00649e-45 -1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/cradle.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="roof">
+  <inertial>
+    <origin xyz="-0.0417551 0.04067 -0.0089018" rpy="0 0 0"/>
+    <mass value="0.246739"/>
+    <inertia ixx="5.7649e-05" iyy="3.43e-05" izz="7.587e-05" ixy="-0" iyz="0" ixz="3.21e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="-3.14159 -7.00649e-45 1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/roof.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="-3.14159 -7.00649e-45 1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/roof.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="p09_prototype_u_bridge">
+  <inertial>
+    <origin xyz="-0.0144979 0.0123775 0.0040405" rpy="0 0 0"/>
+    <mass value="0.712386"/>
+    <inertia ixx="0.000375572" iyy="0.000267912" izz="0.000322083" ixy="0" iyz="-4.89e-07" ixz="-5.2e-08"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="-1.5708 1.22465e-16 1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/p09_prototype_u_bridge.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="-1.5708 1.22465e-16 1.5708"/>
+    <geometry>
+      <mesh filename="../meshes/p09_prototype_u_bridge.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="u_joint_box_servo_motor_initial_draft">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.06"/>
+    <inertia ixx="8.1e-06" iyy="1.41e-05" izz="1e-05" ixy="0" iyz="0" ixz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="-1.5708 1.22465e-16 1.5708"/>
+    <geometry>
+      <box size="0.01 0.01 0.01"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="-1.5708 1.22465e-16 1.5708"/>
+    <geometry>
+      <box size="0.01 0.01 0.01"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="uj_yoke_in">
+  <inertial>
+    <origin xyz="0.000106363 -0.0191597 0.0226114" rpy="0 0 0"/>
+    <mass value="0.223171"/>
+    <inertia ixx="9.07688e-05" iyy="5.78691e-05" izz="8.49606e-05" ixy="-1.3223e-08" iyz="-1.71705e-06" ixz="-1.74549e-07"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.026001 0.0064 0" rpy="1.5708 -5.25487e-46 0"/>
+    <geometry>
+      <mesh filename="../meshes/uj_yoke_in.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0.026001 0.0064 0" rpy="1.5708 -5.25487e-46 0"/>
+    <geometry>
+      <mesh filename="../meshes/uj_yoke_in.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="uj_yoke_out">
+  <inertial>
+    <origin xyz="0.0190619 -0.000119863 -0.0262625" rpy="0 0 0"/>
+    <mass value="0.295657"/>
+    <inertia ixx="8.13084e-05" iyy="0.000114217" izz="0.00010729" ixy="-1.6387e-08" iyz="-2.21065e-07" ixz="-2.0402e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0446 0.025 -0.075" rpy="1.5708 -5.25487e-46 0"/>
+    <geometry>
+      <mesh filename="../meshes/uj_yoke_out.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver">
+      <color rgba="0.700 0.700 0.700 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0.0446 0.025 -0.075" rpy="1.5708 -5.25487e-46 0"/>
+    <geometry>
+      <mesh filename="../meshes/uj_yoke_out.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="revolute_5" type="revolute">
+  <origin xyz="0.035 -0.0126 -0.004" rpy="0 0 0"/>
+  <parent link="servo_motor_initial_draft"/>
+  <child link="p02_new_base_neck"/>
+  <axis xyz="0 0 -1"/>
+  <limit upper="1.91986" lower="-1.91986" effort="100" velocity="100"/>
+</joint>
+
+<joint name="revolute_11" type="revolute">
+  <origin xyz="0.012599 0.004 0.035" rpy="0 0 0"/>
+  <parent link="servo_motor_initial_draft_2"/>
+  <child link="p10_new_elbow"/>
+  <axis xyz="0 1 0"/>
+  <limit upper="1.5708" lower="-1.5708" effort="100" velocity="100"/>
+</joint>
+
+<joint name="revolute_12" type="revolute">
+  <origin xyz="0.035 0.033 0.0126" rpy="0 0 0"/>
+  <parent link="servo_motor_initial_draft_3"/>
+  <child link="new_elbow_v1"/>
+  <axis xyz="0 1 0"/>
+  <limit upper="1.5708" lower="-0.523599" effort="100" velocity="100"/>
+</joint>
+
+<joint name="revolute_13" type="revolute">
+  <origin xyz="0.035 0.004 -0.0126" rpy="0 0 0"/>
+  <parent link="servo_motor_initial_draft_4"/>
+  <child link="p16_wrist_prototype"/>
+  <axis xyz="0 1 0"/>
+  <limit upper="1.5708" lower="-1.5708" effort="100" velocity="100"/>
+</joint>
+
+<joint name="revolute_15" type="revolute">
+  <origin xyz="0.033 -0.035 0.0126" rpy="0 0 0"/>
+  <parent link="servo_motor_initial_draft_5"/>
+  <child link="p17_end_effector"/>
+  <axis xyz="1 0 0"/>
+  <limit upper="1.5708" lower="-3.14159" effort="100" velocity="100"/>
+</joint>
+
+<joint name="revolute_16" type="revolute">
+  <origin xyz="-0.0126 -0.035 0.033" rpy="0 0 0"/>
+  <parent link="servo_motor_initial_draft_6"/>
+  <child link="p18_end_effector_thumb"/>
+  <axis xyz="0 0 1"/>
+  <limit upper="0.296706" lower="-1.74533" effort="100" velocity="100"/>
+</joint>
+
+<joint name="revolute_17" type="revolute">
+  <origin xyz="0.012599 0.004 0.035001" rpy="0 0 0"/>
+  <parent link="servo_motor_initial_draft_7"/>
+  <child link="uj_yoke_in"/>
+  <axis xyz="0 1 0"/>
+  <limit upper="1.5708" lower="-0.610865" effort="100" velocity="100"/>
+</joint>
+
+<joint name="revolute_18" type="revolute">
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+  <parent link="uj_yoke_out"/>
+  <child link="servo_motor_initial_draft_8"/>
+  <axis xyz="-1 0 0"/>
+  <limit upper="1.5708" lower="-1.5708" effort="100" velocity="100"/>
+</joint>
+
+<joint name="uj_yoke_in_to_uj_yoke_out" type="fixed">
+  <origin xyz="-0.018599 -0.0186 0.075" rpy="0 0 0"/>
+  <parent link="uj_yoke_in"/>
+  <child link="uj_yoke_out"/>
+</joint>
+
+<joint name="p01_base_binder_strip_fixed" type="fixed">
+  <origin xyz="0.000309 0.02652 0.03" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="p01_base_binder_strip"/>
+</joint>
+
+<joint name="servo_motor_initial_draft_9_fixed" type="fixed">
+  <origin xyz="-0.030879 -0.01417 0.0554" rpy="0 0 0"/>
+  <parent link="p02_new_base_neck"/>
+  <child link="servo_motor_initial_draft_9"/>
+</joint>
+
+<joint name="servo_motor_initial_draft_7_fixed" type="fixed">
+  <origin xyz="0.0175 0.0151 0.056572" rpy="0 0 0"/>
+  <parent link="p02_new_base_neck"/>
+  <child link="servo_motor_initial_draft_7"/>
+</joint>
+
+<joint name="cradle_fixed" type="fixed">
+  <origin xyz="0.0183 -0.031793 0.0462" rpy="0 0 0"/>
+  <parent link="p02_new_base_neck"/>
+  <child link="cradle"/>
+</joint>
+
+<joint name="roof_fixed" type="fixed">
+  <origin xyz="0.0183 -0.04034 0.1012" rpy="0 0 0"/>
+  <parent link="p02_new_base_neck"/>
+  <child link="roof"/>
+</joint>
+
+<joint name="p09_prototype_u_bridge_fixed" type="fixed">
+  <origin xyz="0.03305 -0.0128 0.041122" rpy="0 0 0"/>
+  <parent link="servo_motor_initial_draft_8"/>
+  <child link="p09_prototype_u_bridge"/>
+</joint>
+
+<joint name="servo_motor_initial_draft_2_fixed" type="fixed">
+  <origin xyz="0.0055 0.0137 0.055395" rpy="0 0 0"/>
+  <parent link="servo_motor_initial_draft_8"/>
+  <child link="servo_motor_initial_draft_2"/>
+</joint>
+
+<joint name="u_joint_box_servo_motor_initial_draft_fixed" type="fixed">
+  <origin xyz="0.03305 -0.0128 0.041122" rpy="0 0 0"/>
+  <parent link="servo_motor_initial_draft_8"/>
+  <child link="u_joint_box_servo_motor_initial_draft"/>
+</joint>
+
+<joint name="servo_motor_initial_draft_4_fixed" type="fixed">
+  <origin xyz="0.099873 -0.00325 0.01755" rpy="0 0 0"/>
+  <parent link="new_elbow_v1"/>
+  <child link="servo_motor_initial_draft_4"/>
+</joint>
+
+<joint name="servo_motor_initial_draft_6_fixed" type="fixed">
+  <origin xyz="0.0337 0.011728 -0.0149" rpy="0 0 0"/>
+  <parent link="p17_end_effector"/>
+  <child link="servo_motor_initial_draft_6"/>
+</joint>
+
+<joint name="servo_motor_initial_draft_fixed" type="fixed">
+  <origin xyz="0.021173 0.02125 0.026" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="servo_motor_initial_draft"/>
+</joint>
+
+<joint name="servo_motor_initial_draft_3_fixed" type="fixed">
+  <origin xyz="-0.006727 -0.03285 0.0925" rpy="0 0 0"/>
+  <parent link="p10_new_elbow"/>
+  <child link="servo_motor_initial_draft_3"/>
+</joint>
+
+<joint name="servo_motor_initial_draft_5_fixed" type="fixed">
+  <origin xyz="0.02765 0.0148 -0.013" rpy="0 0 0"/>
+  <parent link="p16_wrist_prototype"/>
+  <child link="servo_motor_initial_draft_5"/>
+</joint>
+
+</robot>
