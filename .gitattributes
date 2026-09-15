@@ -1,0 +1,5 @@
+# Shell scripts must keep LF endings: bash fails obscurely on CRLF ("\r: command not found").
+*.sh text eol=lf
+
+# Meshes are binary; never let newline conversion near them.
+*.stl binary
