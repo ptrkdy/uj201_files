@@ -56,8 +56,12 @@ sudo apt-get install -y ros-jazzy-desktop \
 grep -qF 'source /opt/ros/jazzy/setup.bash' "${HOME}/.bashrc" \
   || echo 'source /opt/ros/jazzy/setup.bash' >> "${HOME}/.bashrc"
 
+# ROS's setup files reference unset variables (AMENT_TRACE_SETUP_FILES and
+# friends), so -u has to be off while sourcing them.
+set +u
 # shellcheck disable=SC1091
 source /opt/ros/jazzy/setup.bash
+set -u
 say "ROS 2 ${ROS_DISTRO} installed"
 
 # --- workspace --------------------------------------------------------------
@@ -76,13 +80,23 @@ python3 tools/host/urdf_build.py arm_assembly_model.json -o "${WS}/src" \
         --overrides overrides.json --mesh-frame local || true
 python3 tools/host/urdf_lint.py "${WS}/src/arm_assembly_description/urdf/arm_assembly.xacro"
 
-say "Validating with the real toolchain"
-xacro "${WS}/src/arm_assembly_description/urdf/arm_assembly.xacro" > /tmp/arm_assembly.urdf
-check_urdf /tmp/arm_assembly.urdf
+# check_urdf on the flat description needs no package index, so it can run now.
+say "Validating the flat description"
+check_urdf "${WS}/src/arm_assembly_description/urdf/arm_assembly.urdf"
 
 say "Building the workspace"
 cd "${WS}"
 colcon build --symlink-install
+
+# xacro resolves $(find ...) through the ament index, which only knows this
+# package once the workspace is built and sourced -- hence the ordering.
+say "Validating the xacro through the real toolchain"
+set +u
+# shellcheck disable=SC1091
+source "${WS}/install/setup.bash"
+set -u
+xacro "${WS}/src/arm_assembly_description/urdf/arm_assembly.xacro" > /tmp/arm_assembly.urdf
+check_urdf /tmp/arm_assembly.urdf
 
 cat <<EOF
 
