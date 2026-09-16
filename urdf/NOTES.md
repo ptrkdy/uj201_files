@@ -84,8 +84,11 @@ rooted directly at `base_link`.
 
 ## Caveats carried by this description
 
-- Masses come from Fusion's default material, **steel** (7849 kg/m³). Printed
-  parts are roughly 6× lighter. Fine for RViz, wrong for dynamics.
+- Masses are **PLA** (1240 kg/m³). Fusion reported every body at its default
+  material, steel, so `material_density` in `overrides.json` rescales mass and
+  inertia by 1240/7849. Both are linear in density for fixed geometry, so the
+  rescale is exact rather than approximate. Total: 1.613 kg, confirmed by
+  Genesis. Servo masses are datasheet values and are excluded from the rescale.
 - `effort` and `velocity` on every joint are the placeholder `100`, not measured.
 - Collision geometry is the visual mesh. For Gazebo, substitute convex hulls.
 - The servo stand-ins are surface bodies, so Fusion reports zero mass for them;

@@ -380,6 +380,9 @@ def apply_overrides(model, path, report, model_dir=None):
     with open(path) as f:
         overrides = json.load(f)
 
+    explicit_mass = {name for name, patch in overrides.get('links', {}).items()
+                     if 'mass' in patch}
+
     by_name = {l['name']: l for l in model['links']}
     for name, patch in overrides.get('links', {}).items():
         link = by_name.get(name)
@@ -417,6 +420,7 @@ def apply_overrides(model, path, report, model_dir=None):
 
     split_links(model, overrides.get('split_links', []),
                 model_dir or os.path.dirname(os.path.abspath(path)), report)
+    model['_explicit_mass'] = sorted(explicit_mass)
 
     # After the split, so a reversed joint refers to the half that survived.
     reverse_joints(model, overrides.get('reverse_joints', []), report)
@@ -431,6 +435,45 @@ def apply_overrides(model, path, report, model_dir=None):
             group.setdefault('member_names', group.get('members', []))
         model.setdefault('rigid_groups', []).extend(extra)
         report.append('overrides: added %d extra rigid group(s).' % len(extra))
+
+
+def apply_material_density(model, spec, explicit, report):
+    """Rescale mass and inertia from one material density to another.
+
+    Fusion reports mass using whatever material the body is assigned, and its
+    default is steel. For fixed geometry both the mass and every element of the
+    inertia tensor are linear in density -- inertia is the integral of rho*r^2
+    over the volume -- so one ratio rescales both exactly. No re-extraction, no
+    approximation.
+
+    Links whose mass was set explicitly in `links` are left alone: those came
+    from a datasheet rather than from geometry, so a density has no meaning for
+    them.
+
+        {"material_density": {"from": 7849, "to": 1240}}
+    """
+    if not spec:
+        return
+    source = float(spec.get('from', 7849.0))
+    target = float(spec.get('to', 0.0))
+    if source <= 0 or target <= 0:
+        report.append('material_density: need positive from/to; skipped')
+        return
+    ratio = target / source
+    skip = set(explicit) | set(spec.get('exclude', []))
+
+    before = sum(l['mass'] for l in model['links'])
+    changed = 0
+    for link in model['links']:
+        if link['name'] in skip or link['mass'] <= 0:
+            continue
+        link['mass'] *= ratio
+        link['inertia'] = [v * ratio for v in link['inertia']]
+        changed += 1
+    after = sum(l['mass'] for l in model['links'])
+    report.append('material_density: rescaled %d link(s) by %.4f (%g -> %g kg/m3); '
+                  'total mass %.3f -> %.3f kg. %d link(s) kept their explicit mass.'
+                  % (changed, ratio, source, target, before, after, len(skip)))
 
 
 def add_dummy_root(model, spec, report):
@@ -1000,6 +1043,11 @@ def main():
         apply_overrides(model, args.overrides, report,
                         os.path.dirname(os.path.abspath(args.model)))
     prune_wrapper_links(model, report)
+    # After pruning, so the mass totals it reports are the ones that ship.
+    if args.overrides:
+        with open(args.overrides) as f:
+            apply_material_density(model, json.load(f).get('material_density'),
+                                   model.get('_explicit_mass', []), report)
     expand_rigid_groups(model, report)
     # Last, so it sits above whatever ended up being the base.
     if args.overrides:

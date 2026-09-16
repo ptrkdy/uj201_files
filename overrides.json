@@ -159,5 +159,10 @@
   "dummy_root": {
     "_comment": "KDL ignores an inertia on the root link, so give it a massless one above base_link.",
     "name": "base_footprint"
+  },
+  "material_density": {
+    "_comment": "Fusion reported every body at its default material, steel. The arm is printed in PLA. Mass and inertia are both linear in density for fixed geometry, so one ratio rescales both exactly. Links with an explicit mass above (the servos) are datasheet values and are left alone.",
+    "from": 7849,
+    "to": 1240
   }
 }

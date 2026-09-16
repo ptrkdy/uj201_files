@@ -109,11 +109,20 @@ def load(path, pkg_root, pkg_name, find, seen=None):
     return elements
 
 
+def is_frame_only(link):
+    """An intentionally empty link: no inertial, no geometry. Used as a dummy
+    root, since KDL discards an inertia on the root link."""
+    return (link.find('inertial') is None
+            and link.find('visual') is None
+            and link.find('collision') is None)
+
+
 def check_inertial(link_name, link, find):
     inertial = link.find('inertial')
     if inertial is None:
-        find.warn('link "%s" has no <inertial>; Gazebo will treat it as massless'
-                  % link_name)
+        if not is_frame_only(link):
+            find.warn('link "%s" has no <inertial>; Gazebo will treat it as massless'
+                      % link_name)
         return
 
     mass_el = inertial.find('mass')
@@ -223,7 +232,7 @@ def check_joint(joint, links, find):
     return parent, child
 
 
-def check_tree(links, joints, find):
+def check_tree(links, joints, find, link_elements=None):
     """A URDF must be a tree: one root, every other link with exactly one parent."""
     parent_of = {}
     for name, parent, child in joints:
@@ -243,9 +252,14 @@ def check_tree(links, joints, find):
         find.error('%d disconnected roots (%s). A URDF must have exactly one. Every link '
                    'except the base needs a joint attaching it to the tree.'
                    % (len(roots), ', '.join(sorted(roots))))
-    if 'base_link' in links and 'base_link' not in roots:
-        find.error('"base_link" is not the root; it is the child of joint "%s"'
-                   % parent_of['base_link'][0])
+    # The invariant is a single root, not its name: base_link under an empty
+    # base_footprint is the conventional way to keep an inertia off the root.
+    if 'base_link' in links and 'base_link' not in roots and roots:
+        root_el = link_elements.get(roots[0]) if link_elements else None
+        if root_el is None or not is_frame_only(root_el):
+            find.warn('"base_link" is not the root; it is the child of joint "%s", '
+                      'and the root "%s" is not an empty frame link'
+                      % (parent_of['base_link'][0], roots[0]))
 
     # Cycle detection on the parent chain.
     for link in links:
@@ -326,7 +340,7 @@ def main():
 
     root_link = None
     if links:
-        root_link = check_tree(set(links), joints, find)
+        root_link = check_tree(set(links), joints, find, links)
     else:
         find.error('no <link> elements found')
 

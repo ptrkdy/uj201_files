@@ -76,6 +76,11 @@ cannot know, or cannot express:
   rigidly instead of hinging them.
 - **`rigid_groups`** / **`detach_links`** — extra fixed relationships, or
   corrections where the CAD grouping and the kinematics disagree.
+- **`material_density`** — rescale mass and inertia from one density to another,
+  for when CAD reported the default material. Exact, not approximate: both are
+  linear in density for fixed geometry. Links with an explicit mass are skipped.
+- **`dummy_root`** — an empty link above the base, because KDL discards an
+  inertia on the root link.
 
 ## Things that cost real time to work out
 
@@ -101,6 +106,14 @@ exporter's internals and its five failure modes.
 
 ## Status
 
-Model is structurally complete: 23 links, 22 joints, one tree, lint clean, every
-joint verified to drive the right body. Still to do — real materials instead of
-Fusion's default steel, ROS 2 for RViz and Gazebo, collision hulls, `ros2_control`.
+Complete and independently verified. 24 links, 23 joints, one tree, 1.613 kg in PLA.
+
+- **ROS 2 Jazzy** — `check_urdf` parses it, `colcon` builds it, RViz displays it,
+  `robot_state_publisher` loads it with zero warnings and publishes 15 static
+  transforms against 15 fixed joints.
+- **Genesis 0.4.6** — imports via `gs.morphs.URDF` with no conversion. 24 links
+  collapse to 9 under `merge_fixed_links`, 8 actuated DOFs, mesh scale honoured,
+  total mass agrees to five decimal places, 200 steps stable.
+
+Still to do — `effort`/`velocity` from the Feetech datasheet, convex-hull
+collision geometry, `ros2_control`, Gazebo plugins.
