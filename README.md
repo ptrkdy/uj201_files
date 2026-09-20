@@ -106,6 +106,36 @@ cannot know, or cannot express:
 See [docs/exporter_internals.md](docs/exporter_internals.md) for the third-party
 exporter's internals and its five failure modes.
 
+## Licence and attribution
+
+Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+
+**UJ201 is a modified derivative of the [Standard Open SO-100 / SO-101 Arms](https://github.com/TheRobotStudio/SO-ARM100)**
+by TheRobotStudio, used under Apache-2.0. The mechanical design has been
+substantially reworked — a two-axis universal-joint shoulder replacing the
+original shoulder arrangement, redesigned forearm, wrist and end effector, and
+additional structural parts. It is not the SO-100 or SO-101 and should not be
+taken as representing them.
+
+Apache-2.0 is used here rather than anything else because the CAD is a
+derivative of an Apache-2.0 work, so those terms travel with it. Matching the
+whole repository to it keeps one licence over the design and the tooling, and
+the explicit patent grant is worth having on hardware.
+
+If you use this arm, please cite the upstream design as its authors ask:
+
+> Standard Open SO-100 & SO-101 Arms. Rob Knight, Pepijn Kooijmans, Remi Cadene,
+> Simon Alibert, Michel Aractingi, Dana Aubakirova, Adil Zouitine, Russi Martino,
+> Steven Palma, Caroline Pascal, Thomas Wolf. 2024.
+> https://github.com/TheRobotStudio/SO-ARM100
+
+[CITATION.cff](CITATION.cff) carries both citations in machine-readable form.
+
+No code from [`runtimerobotics/fusion360-urdf-ros2`](https://github.com/runtimerobotics/fusion360-urdf-ros2)
+(MIT, © 2024 Lentin Joseph) is included — the tooling here was written from
+scratch — but it is acknowledged in NOTICE, since this project documents its
+internals and follows the geometry convention it established.
+
 ## Status
 
 Complete and independently verified. 24 links, 23 joints, one tree, 1.613 kg in PLA.

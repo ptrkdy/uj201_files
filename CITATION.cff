@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this arm or its tooling, please cite it as below, and cite the SO-ARM100 design it derives from."
+title: "UJ201 — a universal-joint robot arm, and Fusion 360 to ROS 2 URDF tooling"
+url: "https://github.com/ptrkdy/uj201_files"
+date-released: 2026
+license: Apache-2.0
+authors:
+  - family-names: "Daly"
+    given-names: "Patrick"
+references:
+  - type: software
+    title: "Standard Open SO-100 & SO-101 Arms"
+    url: "https://github.com/TheRobotStudio/SO-ARM100"
+    year: 2024
+    license: Apache-2.0
+    notes: "UJ201 is a modified derivative of this design."
+    authors:
+      - family-names: "Knight"
+        given-names: "Rob"
+      - family-names: "Kooijmans"
+        given-names: "Pepijn"
+      - family-names: "Cadene"
+        given-names: "Remi"
+      - family-names: "Alibert"
+        given-names: "Simon"
+      - family-names: "Aractingi"
+        given-names: "Michel"
+      - family-names: "Aubakirova"
+        given-names: "Dana"
+      - family-names: "Zouitine"
+        given-names: "Adil"
+      - family-names: "Martino"
+        given-names: "Russi"
+      - family-names: "Palma"
+        given-names: "Steven"
+      - family-names: "Pascal"
+        given-names: "Caroline"
+      - family-names: "Wolf"
+        given-names: "Thomas"

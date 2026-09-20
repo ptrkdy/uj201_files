@@ -1,0 +1,55 @@
+UJ201
+Copyright 2026 Patrick Daly
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+these files except in compliance with the License. You may obtain a copy of the
+License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+--------------------------------------------------------------------------------
+Derived work: SO-ARM100
+--------------------------------------------------------------------------------
+
+The UJ201 arm is a derivative of the Standard Open SO-100 / SO-101 Arms by
+TheRobotStudio, used under the Apache License 2.0.
+
+    https://github.com/TheRobotStudio/SO-ARM100
+
+THE MECHANICAL DESIGN HAS BEEN MODIFIED. UJ201 is not the SO-100 or SO-101 and
+should not be taken as representing them. It is heavily reworked: a two-axis
+universal-joint shoulder in place of the original shoulder arrangement, a
+redesigned forearm, wrist and end effector, and additional structural parts
+(base binder strip, cradle, roof, U-bridge). Some upstream geometry survives;
+much does not. Faults in this design are ours, not TheRobotStudio's.
+
+This applies to the CAD under cad/, the per-link meshes under meshes/, and the
+URDF description under urdf/, all of which trace back to that design.
+
+The upstream repository asks to be cited (CITATION.cff):
+
+    Standard Open SO-100 & SO-101 Arms
+    Rob Knight, Pepijn Kooijmans, Remi Cadene, Simon Alibert, Michel Aractingi,
+    Dana Aubakirova, Adil Zouitine, Russi Martino, Steven Palma,
+    Caroline Pascal, Thomas Wolf
+    2024. https://github.com/TheRobotStudio/SO-ARM100
+
+Please carry that citation forward if you use this arm.
+
+--------------------------------------------------------------------------------
+Acknowledgement: fusion360-urdf-ros2
+--------------------------------------------------------------------------------
+
+    https://github.com/runtimerobotics/fusion360-urdf-ros2
+    MIT License, Copyright (c) 2024 Lentin Joseph
+
+No code from that project is included here. The tooling in tools/ was written
+from scratch. It is acknowledged because docs/exporter_internals.md documents
+its behaviour in detail, and because the geometry convention this project
+emits -- world-aligned link frames with compensating visual origins -- follows
+the one it established, so descriptions from either are interchangeable.

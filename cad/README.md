@@ -44,9 +44,15 @@ fiddly. Until then, plain Git is the simpler answer.
 `.gitattributes` marks these extensions binary so Git does not attempt to diff
 or merge them.
 
-## Before publishing
+## Licence
 
-This arm is derived from the S100/SO-101 design. Check what the upstream
-licence requires — attribution at minimum is common for open hardware — before
-the CAD goes public. Licence terms are considerably harder to walk back once
-files are pushed.
+**This CAD is a modified derivative** of the
+[Standard Open SO-100 / SO-101 Arms](https://github.com/TheRobotStudio/SO-ARM100)
+by TheRobotStudio, used under Apache License 2.0, and is released under the
+same licence. See [../NOTICE](../NOTICE) for what was changed and the citation
+the upstream authors ask for.
+
+Apache-2.0 requires that modified files carry a notice saying they were
+changed. Binary CAD has nowhere sensible to put that, so it is stated here, in
+NOTICE, and in the top-level README, which covers everything under `cad/`,
+`meshes/` and `urdf/`.
