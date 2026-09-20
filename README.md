@@ -57,7 +57,9 @@ CAD for every change.
 | `tools/host/urdf_lint.py` | anywhere | no | validates a URDF/xacro without ROS installed |
 | `tools/host/mesh_split.py` | anywhere | no | plane-cuts a mesh and integrates mass, centre of mass and inertia |
 | `tools/host/solve_joint_origins.py` | anywhere | no | derives the correct joint-origin transform by scoring candidates against geometry |
+| `tools/fusion/fusion_export_all.py` | Fusion | no | exports every design in the project to `.f3z`/`.step`/`.stl` in one run |
 | `tools/ros/install_jazzy.sh` | Ubuntu 24.04 | installs | ROS 2 Jazzy + workspace + `check_urdf` + `colcon build` |
+| `tools/genesis/load_arm.py` | Genesis | no | loads the description into Genesis and reports links, DOFs, mass and scale |
 
 Anything that mutates runs on a **backup copy** of the design, never the master.
 

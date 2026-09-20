@@ -3,3 +3,11 @@
 
 # Meshes are binary; never let newline conversion near them.
 *.stl binary
+
+# CAD and print artefacts are binary. Git would otherwise try to diff and
+# merge them, and newline conversion would corrupt them outright.
+*.f3z binary
+*.f3d binary
+*.step binary
+*.stp binary
+*.3mf binary
